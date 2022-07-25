@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<context:component-scan
+		base-package="com.xworkz.springmvc"></context:component-scan>
+		
+	<bean
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		id="sessionFactory">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="annotatedClasses">
+			<value>com.xworkz.springmvc.bean.SportBean</value>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>            
+            <prop key="hibernate.show_sql">true</prop>
+            <prop key="hbm2ddl.auto">update</prop>
+        </props>
+    </property>
+	</bean>
+
+	<bean
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		id="dataSource">
+
+		<constructor-arg name="url" value="${dburl}"></constructor-arg>
+		<constructor-arg name="username" value="${dbusername}"></constructor-arg>
+		<constructor-arg name="password" value="${dbpassword}"></constructor-arg>
+
+		<property name="driverClassName" value="${dbdriver_class}"></property>
+	</bean>
+	
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="/WEB-INF/mysql.properties"></property>
+	</bean>
+
+</beans>
