@@ -12,10 +12,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 
 @NamedQuery(name = "SportBean.getAllSportDataDaoImpl", query = "from SportBean")
-//@NamedQuery(name = "SportBean.getSportById", query = "from SportBean where sportName = :sportName")
-//@NamedQuery(name = "SportBean.updateById", query = "update SportBean set sheduledDate = :sheduledDate where sId=:sId")
-@NamedQuery(name = "SportBean.deleteBysportName", query = "delete from SportBean where sportName=:sportName")
-@NamedQuery(name = "SportBean.searchBySportName", query = "from SportBean where sportName =:sportName")
+@NamedQuery(name = "SportBean.deleteBysportName", query = "delete from SportBean where sportName =:inputname or captainName =:inputname or  sportCoach =:inputname or sheduledDate =:inputnamessss")
+@NamedQuery(name = "SportBean.searchBySportName", query = "from SportBean where sportName =:inputname  or captainName =:inputname or  sportCoach =:inputname or sheduledDate =:inputname")
+@NamedQuery(name = "SportBean.updateSportBeanDao", query = "update SportBean set sportName =:SPORTNAME, noOfPlayers =:NOOFPLAYRES, captainName =:CAPTAINNAME, sportCoach =:SPORTCOACH, sheduledDate =:SHEDULEDDATE where sportName =:inputname or captainName =:inputname or  sportCoach =:inputname or sheduledDate =:inputname")
 
 
 @Entity

@@ -2,25 +2,26 @@ package com.xworkz.springmvc.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Service;
+
 import com.xworkz.springmvc.bean.SportBean;
 import com.xworkz.springmvc.customexception.SportException;
 import com.xworkz.springmvc.dao.SportDao;
-import com.xworkz.springmvc.dao.SportDaoImpl;
 import com.xworkz.springmvc.dto.SportDto;
 
-@Component
+@Service
 public class SportServiceImpl implements SportServices {
 
 	@Autowired
 	private SportDao sportDao;
+
+	private static SportBean sportBean;
 
 	public SportServiceImpl() {
 		System.out.println(getClass().getSimpleName() + " bean created");
@@ -34,7 +35,7 @@ public class SportServiceImpl implements SportServices {
 		hashMap = new HashMap<String, String>();
 		try {
 			if (!StringUtils.isBlank(sportDto.getSportName())) {
-				System.out.println("SportName is valid");
+				System.out.println("SportName is Valid");
 				flag = true;
 			} else {
 				hashMap.put("SportName", "SportName is Invalid");
@@ -43,7 +44,7 @@ public class SportServiceImpl implements SportServices {
 			}
 
 			if (sportDto.getNoOfPlayers() > 0) {
-				System.out.println("NoOfPlayers is valid");
+				System.out.println("NoOfPlayers is Valid");
 				flag = true;
 
 			} else {
@@ -53,16 +54,17 @@ public class SportServiceImpl implements SportServices {
 			}
 
 			if (!StringUtils.isBlank(sportDto.getCaptainName())) {
-				hashMap.put("CaptainName", "CaptainName is Invalid");
+				System.out.println("captainName is Valid");
+
 				flag = true;
 			} else {
-				System.out.println("captainName is Invalid");
+				hashMap.put("CaptainName", "CaptainName is Invalid");
 				flag = false;
 				return flag;
 			}
 
 			if (!StringUtils.isBlank(sportDto.getSportCoach())) {
-				System.out.println("SportCoach is valid");
+				System.out.println("SportCoach is Valid");
 				flag = true;
 			} else {
 				hashMap.put("SportCoach", "SportCoach is Invalid");
@@ -126,7 +128,7 @@ public class SportServiceImpl implements SportServices {
 		System.out.println("searchBySportNameService() started");
 		SportDto sportDtoService = null;
 		try {
-			SportBean sportBean = this.sportDao.searchBySportName(sportName);
+			sportBean = this.sportDao.searchBySportName(sportName);
 			if (sportBean != null) {
 				sportDtoService = new SportDto();
 				BeanUtils.copyProperties(sportBean, sportDtoService);
@@ -143,17 +145,19 @@ public class SportServiceImpl implements SportServices {
 		List<Object> listService = null;
 
 		List<Object> listBeanservice = this.sportDao.getAllSportDataDaoImpl();
-		System.out.println("\n To check the data  from DaoImpl method " + listBeanservice);
 
 		if (listBeanservice != null) {
 			listService = new ArrayList<Object>();
 			listService = listBeanservice;
 
-//			for (Object sportBeanService : listBeanservice) {
-//				listService.add(sportBeanService);
-			System.out.println(listService);
-//			}
-
+			
+			/* One more way to initialization or data transfer
+			 * 
+			 * for (Object sportBeanService : listBeanservice) {
+			 * listService.add(sportBeanService); 
+			 * System.out.println(listService); 
+			 * }
+			 */
 		} else {
 			System.out.println("listBeanservice is null at getAllSportDataService()");
 		}
@@ -163,13 +167,14 @@ public class SportServiceImpl implements SportServices {
 	}
 
 	public Boolean deleteSportBeanService(String sportName) {
-
+		System.out.println("deleteSportBeanService(String sportName) started");
 		boolean flag = false;
 		try {
 			Boolean isSportBeanDeleteServ = this.sportDao.deleteSportBeanBySportName(sportName);
 			if (isSportBeanDeleteServ) {
+				System.out.println("Sport Bean  deleted ");
 				flag = true;
-				
+
 			} else {
 
 				System.out.println("Sport Bean Not deleted ");
@@ -179,8 +184,33 @@ public class SportServiceImpl implements SportServices {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
+		System.out.println("deleteSportBeanService(String sportName) ended");
 		return flag;
+	}
+
+	public Boolean updateSportBeanService(SportDto sportDto) {
+		System.out.println("updateSportBeanService(SportDto sportDto) started");
+
+		boolean flag = false;
+		boolean isSportBeanUpdated = false;
+
+		try {
+			flag = this.validateSportData(sportDto);
+			if (flag) {
+				System.out.println("Sport Bean is validated");
+				BeanUtils.copyProperties(sportDto, sportBean);
+				isSportBeanUpdated = this.sportDao.updateSportBeanDao(sportBean);
+
+			} else {
+				System.out.println("Sport Bean is In-valid");
+			}
+
+		} catch (SportException e) {
+			System.out.println(e.getMessage());
+		}
+
+		System.out.println("updateSportBeanService(SportDto sportDto) ended");
+		return isSportBeanUpdated;
 	}
 
 }

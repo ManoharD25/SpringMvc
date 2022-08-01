@@ -10,7 +10,7 @@
 
 	<context:component-scan
 		base-package="com.xworkz.springmvc"></context:component-scan>
-		
+
 	<bean
 		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
 		id="sessionFactory">
@@ -20,11 +20,11 @@
 		</property>
 		<property name="hibernateProperties">
 			<props>
-            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>            
-            <prop key="hibernate.show_sql">true</prop>
-            <prop key="hbm2ddl.auto">update</prop>
-        </props>
-    </property>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hbm2ddl.auto">${hbm2ddl.auto}</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean
@@ -37,10 +37,30 @@
 
 		<property name="driverClassName" value="${dbdriver_class}"></property>
 	</bean>
-	
+
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="/WEB-INF/mysql.properties"></property>
 	</bean>
 
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<constructor-arg name="prefix" value="/WEB-INF/"></constructor-arg>
+		<constructor-arg name="suffix" value=".jsp"></constructor-arg>
+	</bean>
+
+	<bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp-mail.outlook.com"></property>
+		<property name="port" value="587"></property>
+		<property name="username" value="Manohard7@outlook.com"></property>
+		<property name="password" value="Manohard@7"></property>
+		<property name="javaMailProperties">
+			<props>
+				<prop key="properties.mail.smpt.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+		<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+		
+	</bean>
 </beans>

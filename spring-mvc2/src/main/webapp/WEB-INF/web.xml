@@ -21,11 +21,7 @@
 	
 	<servlet-mapping>
 	<servlet-name>manu</servlet-name>
-	<url-pattern>/getRCBImage</url-pattern>
-	<url-pattern>/getRegistrationPage</url-pattern>
-	<url-pattern>/readRegistrationPage</url-pattern>
-	<url-pattern>/searchBySportName</url-pattern>
-	<url-pattern>/getAllSportData</url-pattern>
-	<url-pattern>/deleteSportBeanBySportName</url-pattern>
+	<url-pattern>*.sports</url-pattern>
+	<url-pattern>*.mail</url-pattern>
 	</servlet-mapping>
 </web-app>

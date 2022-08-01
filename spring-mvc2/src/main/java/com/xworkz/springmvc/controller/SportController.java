@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.xworkz.springmvc.bean.SportBean;
 import com.xworkz.springmvc.customexception.SportException;
@@ -14,8 +16,8 @@ import com.xworkz.springmvc.dto.SportDto;
 import com.xworkz.springmvc.services.SportServiceImpl;
 import com.xworkz.springmvc.services.SportServices;
 
-@RequestMapping("/")
-@Component
+//@RequestMapping("/")
+@Controller
 public class SportController {
 
 	@Autowired
@@ -25,29 +27,22 @@ public class SportController {
 		System.out.println(getClass().getSimpleName() + " bean created");
 	}
 
-	@RequestMapping("/getRCBImage")
+	@RequestMapping("/getRCBImage.sports")
 	public String getRCBImage() {
 		System.out.println("getRCBImage() started");
-		return "WEB-INF/RCB best pic.jpg";
+		return "RCB best pic";
 
 	}
 
-	@RequestMapping(value = "/getRegistrationPage")
+	@RequestMapping(value = "/getRegistrationPage.sports")
 	public String getRegistrationPage() {
 		System.out.println("getRegistration() started");
-		return "/WEB-INF/Registration.jsp";
+		return "Registration";
 
 	}
 
-	@RequestMapping(value = "/readRegistrationPage")
+	@RequestMapping(value = "/readRegistrationPage.sports", method = RequestMethod.POST)
 	public String readWellComePage(@ModelAttribute SportDto sportDto, Model model) throws SportException {
-
-		System.out.println("readRegistrationPage() started");
-		System.out.println("sportName : " + sportDto.getSportName());
-		System.out.println("noOfPlayers : " + sportDto.getNoOfPlayers());
-		System.out.println("captainName : " + sportDto.getCaptainName());
-		System.out.println("sportCoach : " + sportDto.getSportCoach());
-		System.out.println("sheduledDate : " + sportDto.getSheduledDate());
 
 		boolean isSportServiceValid = this.sportServices.validateSportData(sportDto);
 
@@ -74,10 +69,10 @@ public class SportController {
 			model.addAttribute("errorSheduledDate", hashMapCon.get("SheduledDate"));
 		}
 
-		return "/WEB-INF/Registration.jsp";
+		return "Registration";
 	}
 
-	@RequestMapping("/searchBySportName")
+	@RequestMapping(value = "/searchBySportName.sports", method = RequestMethod.POST)
 	public String searchBySportName(@RequestParam String sportName, Model model) {
 		System.out.println("searchBySportName() started " + sportName);
 
@@ -91,27 +86,28 @@ public class SportController {
 
 			if (sportDtoController != null) {
 
-				model.addAttribute("SportName", sportDtoController.getSportName());
-				model.addAttribute("CaptainName", sportDtoController.getCaptainName());
-				model.addAttribute("SportCoach", sportDtoController.getSportCoach());
-				model.addAttribute("SheduledDate", sportDtoController.getSheduledDate());
-				model.addAttribute("NoOfPlayers", sportDtoController.getNoOfPlayers());
-
+				model.addAttribute("sportName", sportDtoController.getSportName());
+				model.addAttribute("noOfPlayers", sportDtoController.getNoOfPlayers());
+				model.addAttribute("captainName", sportDtoController.getCaptainName());
+				model.addAttribute("sportCoach",  sportDtoController.getSportCoach() );
+				model.addAttribute("sheduledDate", sportDtoController.getSheduledDate());
+				
+				model.addAttribute("searched", " Search reasult");
 			} else {
-				System.out.println("sportBeanController is empty ");
+				System.out.println("sportDto at Controller is empty ");
 
-				model.addAttribute("searchSportName ", " Search reasult not found  " + sportName);
+				model.addAttribute("notsearched", " Search reasult not found  ");
 			}
 
 		} else {
-			model.addAttribute("searchSportName ", " Invalid name  " + sportName);
+			model.addAttribute("notsearched", " Invalid name  " + sportName);
 		}
 
-		return "/WEB-INF/Registration.jsp";
+		return "Registration";
 
 	}
 
-	@RequestMapping(value = "/getAllSportData")
+	@RequestMapping(value = "/getAllSportData.sports")
 	public String getAllSportData(Model model) {
 		System.out.println("getAllSportData() started");
 
@@ -123,24 +119,46 @@ public class SportController {
 
 		model.addAttribute("listController", listController);
 
-		System.out.println("getAllSportData() ended");
-
-		return "/WEB-INF/Registration.jsp";
-
+		return "Registration";
 	}
 
-	@RequestMapping(value = "/deleteSportBeanBySportName")
+	@RequestMapping(value = "/deleteSportBeanBySportName.sports", method = RequestMethod.POST)
 	public String deleteSportBeanBySportName(@RequestParam String sportName, Model model) {
 		System.out.println("deleteSportBeanBySportName() started");
 
 		Boolean isSportBeanDeleted = this.sportServices.deleteSportBeanService(sportName);
 		if (isSportBeanDeleted) {
-			model.addAttribute("success", " sportName is deleted successfully  ");
+			model.addAttribute("delete", " sportBean is deleted successfully  ");
 
 		} else {
-			model.addAttribute("unsuccess", " sportName is din't deleted  ");
+			model.addAttribute("Notdelete", " sportBean  din't deleted");
 		}
-		return "/WEB-INF/Registration.jsp";
+		return "Registration";
 
 	}
+
+	@RequestMapping(value = "/updateSportBeanBySportName.sports", method = RequestMethod.POST)
+	public String updateSportBeanBySportName(@ModelAttribute SportDto sportDto, Model model) {
+		System.out.println("updateSportBeanBySportName() started");
+
+		
+		Boolean isSportBeanDeleted = this.sportServices.updateSportBeanService(sportDto);
+		if (isSportBeanDeleted) {
+			model.addAttribute("updated", " sportBean is updated successfully  ");
+
+		} else {
+			Map<String, String> hashMapCon = SportServiceImpl.hashMap;
+
+			model.addAttribute("errorSportName", hashMapCon.get("SportName"));
+			model.addAttribute("errorNoOfPlayers", hashMapCon.get("NoOfPlayers"));
+			model.addAttribute("errorCaptainName", hashMapCon.get("CaptainName"));
+			model.addAttribute("errorSportCoach", hashMapCon.get("SportCoach"));
+			model.addAttribute("errorSheduledDate", hashMapCon.get("SheduledDate"));
+			
+			model.addAttribute("notupdated", " sportBean  din't updated  ");
+		}
+		return "Registration";
+
+	}
+
 }
